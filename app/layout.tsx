@@ -11,7 +11,10 @@ const manrope = Manrope({
 
 export const metadata: Metadata = {
   title: 'DreamOracle AI',
-  description: 'Український езотеричний оракул для розшифровки снів'
+  description: 'Український езотеричний оракул для розшифровки снів',
+  icons: {
+    icon: '/favicon.svg'
+  }
 };
 
 export default function RootLayout({

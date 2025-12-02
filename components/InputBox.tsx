@@ -75,10 +75,11 @@ const InputBox = ({ onDecode, isLoading, placeholder, srLabel, buttonLabel }: In
       <div className="flex justify-center">
         <button
           type="submit"
-          className="decode-button"
+          className="decode-button flex items-center gap-2"
           disabled={isLoading || !dream.trim()}
         >
-          {isLoading ? <span className="ring-loader" /> : buttonLabel}
+          <span>{buttonLabel}</span>
+          {isLoading && <span className="ring-loader" />}
         </button>
       </div>
     </form>

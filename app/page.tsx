@@ -33,7 +33,7 @@ type CopyBlock = {
 
 const uiCopy: Record<UILanguage, CopyBlock> = {
   ua: {
-    tag: 'DreamOracle AI — блукаємо лісами бажань і підсвічуємо двері снів',
+    tag: 'DreamOracle AI — проводимо крізь ліси бажань до дверей сну',
     srLabel: 'Поділися сном',
     button: 'Відкрити двері',
     error: 'Оракул перезбирає сенси. Спробуй за мить.',
@@ -181,7 +181,7 @@ const uiCopy: Record<UILanguage, CopyBlock> = {
         placeholder: 'Мне снилось, будто дрон доставлял письма от русалок...'
       },
       {
-        headline: 'Напиши свой мягкий апокалипсис — мы выдадим пароль',
+        headline: 'Напиши свой мягкий апокалипсис — мы расшифруем послание',
         placeholder: 'Мне снилось, как ледяной лифт открыл звёздные кладовые...'
       },
       {
@@ -197,6 +197,9 @@ const API_LANGUAGE_MAP: Record<UILanguage, 'uk' | 'en' | 'ru'> = {
   en: 'en',
   ru: 'ru'
 };
+
+const isUiLanguage = (value: unknown): value is UILanguage =>
+  value === 'ua' || value === 'en' || value === 'ru';
 
 export default function Home() {
   const [oracleResult, setOracleResult] = useState<OracleResult | null>(null);
@@ -215,6 +218,23 @@ export default function Home() {
     const variants = uiCopy[uiLanguage].variants;
     const randomIndex = Math.floor(Math.random() * variants.length);
     setVariantIndex(randomIndex);
+  }, [uiLanguage]);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    const stored = window.localStorage.getItem('dream-oracle-lang');
+    if (stored && isUiLanguage(stored)) {
+      setUiLanguage(stored);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === 'undefined') {
+      return;
+    }
+    window.localStorage.setItem('dream-oracle-lang', uiLanguage);
   }, [uiLanguage]);
 
   const handleDecode = useCallback(

@@ -175,7 +175,7 @@ const Waveform = ({ intensity, excited = false, className = '' }: WaveformProps)
 
   return (
     <div
-      className={`relative aspect-square w-24 overflow-hidden rounded-full border border-white/10 bg-gradient-to-br from-white/10 via-white/[0.05] to-white/10 shadow-inner shadow-black/50 sm:w-32 ${className}`}
+      className={`relative aspect-square w-16 overflow-hidden rounded-full border border-white/10 bg-gradient-to-br from-white/10 via-white/[0.05] to-white/10 shadow-inner shadow-black/50 sm:w-24 ${className}`}
       style={
         excited
           ? {
@@ -190,7 +190,27 @@ const Waveform = ({ intensity, excited = false, className = '' }: WaveformProps)
         className="h-full w-full"
         style={{ filter: excited ? 'brightness(1.3) saturate(1.15)' : 'none' }}
       />
-      <div className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-b from-white/15 via-transparent to-black/70" />
+        <div className="pointer-events-none absolute inset-0 rounded-full bg-gradient-to-b from-white/15 via-transparent to-black/70" />
+        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
+          <div
+            className="rounded-full shadow-aurora transition-all duration-300"
+            style={{
+              width: excited ? '70%' : '55%',
+              height: excited ? '70%' : '55%',
+              opacity: excited ? 0.95 : 0.7,
+              boxShadow: excited
+                ? '0 0 30px rgba(255,255,255,0.45)'
+                : '0 0 15px rgba(255,255,255,0.25)',
+              backgroundImage: `
+                radial-gradient(circle at 30% 30%, rgba(255, 255, 255, 0.6), transparent 55%),
+                radial-gradient(circle at 65% 60%, rgba(185, 173, 255, 0.4), transparent 60%),
+                radial-gradient(circle at 45% 70%, rgba(210, 210, 215, 0.45), transparent 40%),
+                radial-gradient(circle at 60% 35%, rgba(170, 150, 200, 0.3), transparent 30%),
+                radial-gradient(circle at 50% 50%, rgba(255,255,255,0.9), rgba(255,255,255,0.15))
+              `
+            }}
+          />
+        </div>
     </div>
   );
 };
