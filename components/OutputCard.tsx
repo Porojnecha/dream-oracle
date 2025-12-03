@@ -19,10 +19,20 @@ type OutputCardLabels = {
 type OutputCardProps = {
   dream: string;
   result: OracleResult | null;
+  seeDreamLabel: string;
+  onVisualize: () => void;
+  isVisualizing: boolean;
   labels: OutputCardLabels;
 };
 
-const OutputCard = ({ dream, result, labels }: OutputCardProps) => {
+const OutputCard = ({
+  dream,
+  result,
+  labels,
+  seeDreamLabel,
+  onVisualize,
+  isVisualizing
+}: OutputCardProps) => {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
@@ -109,6 +119,17 @@ const OutputCard = ({ dream, result, labels }: OutputCardProps) => {
                 <p className="mt-3 text-base text-white/75">{result.guidance}</p>
               </div>
             )}
+
+            <div className="flex justify-center">
+              <button
+                type="button"
+                onClick={onVisualize}
+                disabled={isVisualizing}
+                className="moon-button"
+              >
+                {seeDreamLabel}
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -75,7 +75,7 @@ const InputBox = ({ onDecode, isLoading, placeholder, srLabel, buttonLabel }: In
       <div className="flex justify-center">
         <button
           type="submit"
-          className="decode-button flex items-center gap-2"
+          className="decode-button flex items-center gap-3"
           disabled={isLoading || !dream.trim()}
         >
           <span>{buttonLabel}</span>

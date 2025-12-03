@@ -1,5 +1,6 @@
 'use client';
 
+import Image from 'next/image';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import InputBox from '@/components/InputBox';
 import OutputCard from '@/components/OutputCard';
@@ -21,6 +22,9 @@ type CopyBlock = {
   tag: string;
   srLabel: string;
   button: string;
+  seeDreamLabel: string;
+  visionLoading: string;
+  closeVision: string;
   error: string;
   footer: string;
   cardTitle: string;
@@ -36,6 +40,9 @@ const uiCopy: Record<UILanguage, CopyBlock> = {
     tag: 'DreamOracle AI — проводимо крізь ліси бажань до дверей сну',
     srLabel: 'Поділися сном',
     button: 'Відкрити двері',
+    seeDreamLabel: 'Побачити сон',
+    visionLoading: 'Почекай, ми шукаємо ключі до твого сновидіння',
+    closeVision: 'Закрити видиво',
     error: 'Оракул перезбирає сенси. Спробуй за мить.',
     footer: 'DreamOracle AI © 2025 — тихо тримаємо ключі до снів',
     cardTitle: 'м’який резонанс',
@@ -90,6 +97,9 @@ const uiCopy: Record<UILanguage, CopyBlock> = {
     tag: 'DreamOracle AI — guiding modern hearts through their dream doors',
     srLabel: 'Share your dream',
     button: 'Open the door',
+    seeDreamLabel: 'See the dream',
+    visionLoading: 'Hold on, we are searching for the keys to your vision',
+    closeVision: 'Close vision',
     error: 'The oracle is remixing signals. Try again in a moment.',
     footer: 'DreamOracle AI © 2025 — keeping the quiet keys for night stories',
     cardTitle: 'soft resonance',
@@ -144,6 +154,9 @@ const uiCopy: Record<UILanguage, CopyBlock> = {
     tag: 'DreamOracle AI — проводим через лес желаний к дверям сна',
     srLabel: 'Опиши сон',
     button: 'Открыть дверь',
+    seeDreamLabel: 'Увидеть сон',
+    visionLoading: 'Подожди, мы ищем ключи к твоему сновидению',
+    closeVision: 'Закрыть видение',
     error: 'Оракул пересобирает сигналы. Попробуй чуть позже.',
     footer: 'DreamOracle AI © 2025 — тихо бережём ключи от ночи',
     cardTitle: 'мягкий резонанс',
@@ -207,6 +220,8 @@ export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [uiLanguage, setUiLanguage] = useState<UILanguage>('ua');
+  const [isVisualizing, setIsVisualizing] = useState(false);
+  const [imageUrl, setImageUrl] = useState<string | null>(null);
   const copy = uiCopy[uiLanguage];
   const [variantIndex, setVariantIndex] = useState(0);
   const heroVariant = useMemo(() => {
@@ -243,6 +258,7 @@ export default function Home() {
       setErrorMessage(null);
       setLastDream(dream);
       setOracleResult(null);
+      setImageUrl(null);
 
       try {
         const response = await fetch('/api/decode', {
@@ -273,6 +289,35 @@ export default function Home() {
     },
     [copy.error, uiLanguage]
   );
+
+  const handleVisualize = useCallback(async () => {
+    if (!lastDream.trim()) {
+      return;
+    }
+    setIsVisualizing(true);
+    setImageUrl(null);
+    try {
+      const response = await fetch('/api/visualize', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: lastDream })
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data?.error ?? 'Vision request failed');
+      }
+      if (!data?.imageUrl) {
+        throw new Error('Vision returned no image');
+      }
+      setImageUrl(data.imageUrl);
+    } catch (error) {
+      console.error(error);
+      setErrorMessage((prev) => prev ?? copy.error);
+      setImageUrl(null);
+    } finally {
+      setIsVisualizing(false);
+    }
+  }, [copy.error, lastDream]);
 
   useEffect(() => {
     if (!oracleResult) {
@@ -315,6 +360,9 @@ export default function Home() {
       <OutputCard
         dream={lastDream}
         result={oracleResult}
+        seeDreamLabel={copy.seeDreamLabel}
+        onVisualize={handleVisualize}
+        isVisualizing={isVisualizing}
         labels={{
           cardTitle: copy.cardTitle,
           dreamLabel: copy.dreamLabel,
@@ -346,6 +394,41 @@ export default function Home() {
           ))}
         </div>
       </div>
+
+      {(isVisualizing || imageUrl) && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 px-4 text-center">
+          {isVisualizing ? (
+            <div className="space-y-4">
+              <p className="text-sm uppercase tracking-[0.4em] text-white/60">
+                {copy.visionLoading}
+              </p>
+              <div className="ring-loader mx-auto" />
+            </div>
+          ) : (
+            imageUrl && (
+              <div className="space-y-4">
+                <div className="mx-auto max-w-3xl overflow-hidden rounded-[32px] border border-white/10 shadow-aurora">
+                  <Image
+                    src={imageUrl}
+                    alt="Dream vision"
+                    width={1024}
+                    height={1024}
+                    className="h-full w-full object-cover"
+                    unoptimized={imageUrl.startsWith('data:')}
+                  />
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setImageUrl(null)}
+                  className="text-xs uppercase tracking-[0.4em] text-white/60 hover:text-white"
+                >
+                  {copy.closeVision}
+                </button>
+              </div>
+            )
+          )}
+        </div>
+      )}
     </main>
   );
 }

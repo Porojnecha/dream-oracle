@@ -85,6 +85,75 @@ body {
   cursor: progress;
 }
 
+.orb-pulse {
+  animation: orb-breathe 2.4s ease-in-out infinite;
+}
+
+@keyframes orb-breathe {
+  0% {
+    box-shadow: 0 0 20px rgba(167, 139, 250, 0.25), 0 0 40px rgba(125, 211, 252, 0.15);
+    transform: scale(1);
+  }
+  50% {
+    box-shadow: 0 0 35px rgba(167, 139, 250, 0.45), 0 0 70px rgba(125, 211, 252, 0.25);
+    transform: scale(1.05);
+  }
+  100% {
+    box-shadow: 0 0 20px rgba(167, 139, 250, 0.25), 0 0 40px rgba(125, 211, 252, 0.15);
+    transform: scale(1);
+  }
+}
+
+.moon-button {
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 9999px;
+  padding: 0.75rem 2rem;
+  letter-spacing: 0.35em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+  overflow: hidden;
+  transition: color 0.2s ease;
+}
+
+.moon-button::before {
+  content: '';
+  position: absolute;
+  inset: -30%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.4), transparent 70%);
+  opacity: 0.4;
+  animation: moon-pulse 2.8s ease-in-out infinite;
+}
+
+.moon-button span {
+  position: relative;
+  z-index: 1;
+}
+
+.moon-button:hover {
+  color: #fff;
+}
+
+.moon-button:disabled {
+  opacity: 0.5;
+  cursor: progress;
+}
+
+@keyframes moon-pulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.2;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0.2;
+  }
+}
+
 .ring-loader {
   width: 18px;
   height: 18px;

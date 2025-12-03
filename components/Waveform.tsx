@@ -175,7 +175,7 @@ const Waveform = ({ intensity, excited = false, className = '' }: WaveformProps)
 
   return (
     <div
-      className={`relative aspect-square w-16 overflow-hidden rounded-full border border-white/10 bg-gradient-to-br from-white/10 via-white/[0.05] to-white/10 shadow-inner shadow-black/50 sm:w-24 ${className}`}
+      className={`relative aspect-square w-16 overflow-hidden rounded-full border border-white/10 bg-gradient-to-br from-white/10 via-white/[0.05] to-white/10 shadow-inner shadow-black/50 sm:w-24 ${excited ? 'orb-pulse' : ''} ${className}`}
       style={
         excited
           ? {
